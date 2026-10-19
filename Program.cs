@@ -80,7 +80,7 @@ namespace MatePadServer
 
         public MainForm()
         {
-            Text = "MatePad 11.5 - Windows Ink & HD Stream Server";
+            Text = "NexusInk-server";
             Size = new Size(450, 310);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
