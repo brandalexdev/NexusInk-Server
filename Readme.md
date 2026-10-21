@@ -36,26 +36,32 @@ You only need the pre-compiled executable to use this program:
 
 ## 🌟 Features
 
-* 🎯 **Native Windows Ink Digitizer (`PT_PEN`):** Direct Win32 synthetic pointer injection. Recognized as a true hardware graphics tablet (not a mouse emulation).
+* 🎯 **Native Windows Ink Digitizer (`PT_PEN`):** Direct Win32 synthetic pointer injection. Recognized as a true hardware graphics tablet (not mouse emulation).
 * 🖊️ **Pressure & Tilt Dynamics:** 1024 pressure levels, X/Y tilt angle support, stylus hover, and eraser button toggle.
-* ⚡ **Ultra-Low Latency Telemetry:** UDP port `5000` with 28-byte binary packets for instantaneous response and hotkeys (`Ctrl+Z`, `Ctrl+Shift+Z`, `Space`, `Alt`, `B`, `E`).
-* 📡 **Zero-Config Auto-Discovery:** UDP port `5001` broadcast pulse pairs tablet and PC automatically.
-* 📺 **Crisp Full HD Screen Streaming:** TCP port `5002` low-latency screen mirror at 1920×1080 with adjustable JPEG quality (60% – 85%).
+* ⚡ **Ultra-Low Latency Telemetry:** UDP & TCP port `5000` with 28-byte binary packets for instantaneous response and hotkeys (`Ctrl+Z`, `Ctrl+Shift+Z`, `Space`, `Alt`, `B`, `E`).
+* 🚀 **Automatic USB Turbo Mode:** Instant plug-and-play detection when connecting the USB cable, auto-switching to rock-solid **60 FPS** Full HD screen mirror, 85% JPEG quality, and sub-millisecond drawing latency (<1ms).
+* 🔌 **Direct USB Connection (No Tethering / Private Network Needed):** Plug in the USB-C cable with USB Debugging enabled on your tablet. No SIM card, mobile data, or private network tethering required!
+* 🌐 **Bilingual Interface (English & Spanish):** Built-in real-time language switcher directly in the desktop app.
+* 🛡️ **Automatic Firewall Self-Config:** Automatically configures Windows Firewall rules on startup for all network profiles.
 
 ---
 
 ## 🔌 Connection Modes
 
-### ⚡ Option 1: Wired USB (Best for Professional Drawing — <1 ms Latency)
-1. Connect your tablet to the PC via a USB-C cable.
-2. Enable **USB Tethering** in your tablet's network settings.
-3. Windows creates a direct virtual local network link over the cable.
-4. Tap **Auto-Discover** in the tablet app (or enter the USB IP shown on the server).
+### ⚡ Option 1: Direct Wired USB (Recommended for Drawing — <1 ms Latency & 60 FPS)
+
+> [!TIP]
+> **No USB Tethering or Private Network needed!** Works on all tablets, including Wi-Fi-only models without cellular modems.
+
+1. Enable **USB Debugging** (and *"Allow ADB debugging in charge-only mode"* on Huawei devices) in **Developer Options** on your tablet.
+2. Connect your tablet to the PC via a USB-C cable.
+3. The server immediately detects your tablet model, displays a green badge (**`⚡ USB CABLE ACTIVE`**), and routes the screen and stylus streams.
+4. In your tablet client app, connect to **`127.0.0.1`** (localhost) for zero-latency 60 FPS drawing.
 
 ### 📶 Option 2: Wireless (5GHz Wi-Fi)
 1. Connect PC and tablet to the same Wi-Fi network (5GHz strongly recommended).
 2. Open the tablet app — it will auto-detect and pair in less than 1 second.
-3. Select **Balanced HD (70%)** stream quality for smooth performance.
+3. Select **Balanced HD** stream quality for smooth performance over Wi-Fi.
 
 ---
 
@@ -67,20 +73,20 @@ You only need the pre-compiled executable to use this program:
 │      (Stylus App)      │                    │  (NexusInk-server)     │
 └───────────┬────────────┘                    └───────────┬────────────┘
             │                                             │
-            ├──────── UDP 5001 (Auto-Discover) ──────────►│ Pairs in <1s
+            ├──── UDP/TCP 5001 (Auto-Discover) ──────────►│ Pairs in <1s
             │                                             │
-            ├──────── UDP 5000 (Stylus Telemetry) ───────►│ Injects PT_PEN
-            │         (28-byte packet @ 120Hz)            │ (Zero Latency)
+            ├──── UDP/TCP 5000 (Stylus Telemetry) ───────►│ Injects PT_PEN
+            │     (28-byte packet @ 120Hz)                │ (<1ms Latency)
             │                                             │
-            │◄─────── TCP 5002 (HD Screen Stream) ────────┤ TCP_NODELAY
-            │         (1080p JPEG @ ~35 FPS)              │ Monitor Mirror
+            │◄─── TCP 5002 (HD Screen Stream) ────────────┤ TCP_NODELAY
+            │     (1080p JPEG @ 60 FPS on USB)            │ Monitor Mirror
 ```
 
 | Port | Protocol | Purpose | Payload Details |
 | :---: | :---: | :--- | :--- |
-| **`5000`** | **UDP** | Stylus & Telemetry | 28-byte Big-Endian binary packet ($X, Y$, pressure, tilt) + 4-byte shortcut triggers. |
-| **`5001`** | **UDP** | Auto-Discovery | Broadcast pulse (`DISCOVER_MATEPAD_SERVER`) for instant zero-configuration pairing. |
-| **`5002`** | **TCP** | Screen Mirroring | Low-latency Full HD (1920×1080) stream with selectable JPEG quality (60% – 85%). |
+| **`5000`** | **UDP / TCP** | Stylus & Telemetry | 28-byte Big-Endian binary packet ($X, Y$, pressure, tilt) + 4-byte shortcut triggers. |
+| **`5001`** | **UDP / TCP** | Auto-Discovery | Broadcast pulse (`DISCOVER_MATEPAD_SERVER` / `DISCOVER_NEXUS_SERVER`) for instant zero-configuration pairing. |
+| **`5002`** | **TCP** | Screen Mirroring | Low-latency Full HD (1920×1080) stream at 60 FPS (USB) or 35 FPS (Wi-Fi). |
 
 ---
 
